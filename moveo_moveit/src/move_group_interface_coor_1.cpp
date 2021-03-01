@@ -10,7 +10,7 @@
 #include <moveit_visual_tools/moveit_visual_tools.h>
 
 int main(int argc, char **argv)
-{	
+{
   ros::init(argc, argv, "move_group_1");
   ros::NodeHandle node_handle;
   ros::AsyncSpinner spinner(1);
@@ -32,7 +32,7 @@ int main(int argc, char **argv)
   // Raw pointers are frequently used to refer to the planning group for improved performance.
   const robot_state::JointModelGroup *joint_model_group =
     move_group.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
-  
+
   move_group.setEndEffectorLink("Link_5");
   geometry_msgs::PoseStamped current_pose = move_group.getCurrentPose();
   // We can print the name of the reference frame for this robot.
@@ -45,7 +45,7 @@ int main(int argc, char **argv)
   ROS_INFO_NAMED("moveo", "y orientation: %f", current_pose.pose.orientation.y);
   ROS_INFO_NAMED("moveo", "z orientation: %f", current_pose.pose.orientation.z);
   ROS_INFO_NAMED("moveo", "w orientation: %f", current_pose.pose.orientation.w);
- 
+
   // Visualization
   // ^^^^^^^^^^^^^
   //
@@ -60,7 +60,9 @@ int main(int argc, char **argv)
   visual_tools.loadRemoteControl();
 
   // Rviz provides many types of markers, in this demo we will use text, cylinders, and spheres
-  Eigen::Affine3d text_pose = Eigen::Affine3d::Identity();
+  // Eigen::Affine3d text_pose = Eigen::Affine3d::Identity();
+  Eigen::Isometry3d text_pose = Eigen::Isometry3d::Identity(); // workaround
+  
   text_pose.translation().z() = 1.0; // above head of PR2
   visual_tools.publishText(text_pose, "MoveGroupInterface Moveo Demo", rvt::WHITE, rvt::XLARGE);
 
@@ -105,11 +107,11 @@ int main(int argc, char **argv)
 
 
 //upright pose using robot_pose_publisher
-// position: 
+// position:
 //   x: 0.450865569212
 //   y: -0.0923533864181
 //   z: -0.646847372618
-// orientation: 
+// orientation:
 //   x: -0.359579060437
 //   y: -0.240936531262
 //   z: 0.747165791213
@@ -138,6 +140,6 @@ int main(int argc, char **argv)
   visual_tools.prompt("Execute trajectory");
   move_group.move();
 
-  ros::shutdown();  
+  ros::shutdown();
   return 0;
 }
